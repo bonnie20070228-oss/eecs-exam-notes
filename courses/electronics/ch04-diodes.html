@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch4 二極體 | 電子學 | 電資考前講義庫</title>
+<meta name="description" content="電子學第 4 章二極體考前講義：理想二極體、指數模型、定電壓降模型、小訊號模型、整流與峰值檢波，中英對照。">
+<meta name="note-id" content="electronics-ch04">
+<meta name="course" content="electronics">
+<meta name="chapter" content="4">
+<meta name="textbook" content="Sedra &amp; Smith, Microelectronic Circuits, Ch4 Diodes">
+<meta name="updated" content="2026-11-04">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/style.css">
+<script defer src="../../assets/vendor/katex/katex.min.js"></script>
+<script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+<script defer src="../../assets/catalog.js"></script>
+<script defer src="../../assets/notes.js"></script>
+</head>
+<body class="note" data-course="electronics">
+<a class="skip" href="#main">跳到內容</a>
+<header class="site-bar">
+  <a class="brand" href="../../index.html">電資考前講義庫</a>
+  <nav aria-label="網站">
+    <a href="../../index.html">講義目錄</a>
+    <a href="../../glossary.html">術語表</a>
+  </nav>
+</header>
+
+<div class="note-layout">
+<nav class="toc" aria-label="本頁目錄"></nav>
+<main id="main">
+
+<header class="note-head">
+  <p class="crumb"><a href="../../index.html#electronics">電子學</a> / 第 4 章</p>
+  <h1>二極體 <span class="en">Diodes</span></h1>
+  <p class="lede">二極體是第一個非線性元件，這章真正要練的是「挑對模型」：同一顆二極體，算整流用理想模型、算偏壓用 0.7 V、算微小變化用小訊號電阻。</p>
+  <dl class="note-meta">
+    <dt>課本</dt><dd>Sedra &amp; Smith, <i>Microelectronic Circuits</i>，第 4 章</dd>
+    <dt>考試範圍</dt><dd>英文出題</dd>
+    <dt>先備</dt><dd>電路學的 KVL、KCL、戴維寧等效；第 3 章 pn 接面</dd>
+  </dl>
+</header>
+
+<section id="overview">
+  <h2>本章地圖 <span class="en">Overview</span></h2>
+  <p>前半章建立模型（理想、指數、定電壓降、小訊號），後半章拿模型分析電路（整流器、峰值檢波、穩壓）。後面的 MOSFET 和 BJT 章節會重複同一套思路：先求直流偏壓點，再在偏壓點附近用線性小訊號模型。發光二極體、限幅與箝位電路屬於應用，本頁只在觀念題帶到。</p>
+  <ul class="scope">
+    <li>理想二極體與「假設狀態再驗證」的分析法</li>
+    <li>順向、逆向、崩潰三個區域與指數模型</li>
+    <li>迭代法、定電壓降模型</li>
+    <li>小訊號模型與 $r_d$</li>
+    <li>齊納二極體穩壓</li>
+    <li>半波、全波、橋式整流與峰值整流器的漣波</li>
+  </ul>
+</section>
+
+<section id="concepts">
+  <h2>核心觀念 <span class="en">Key Ideas</span></h2>
+
+  <article class="concept" id="c-ideal-diode">
+    <h3>理想二極體 <span class="en">Ideal diode</span></h3>
+    <p>理想二極體只有兩個狀態：導通時是短路（$v_D = 0$，電流任意正值），截止時是開路（$i_D = 0$，電壓任意負值）。它把電路切成兩種線性電路，所以分析方法永遠是：先假設狀態，算出結果，再檢查有沒有矛盾。</p>
+    <p>假設導通就檢查 $i_D &gt; 0$；假設截止就檢查 $v_D &lt; 0$。有矛盾就換另一個假設重算。</p>
+  </article>
+
+  <article class="concept" id="c-exponential-model">
+    <h3>指數模型 <span class="en">Exponential model</span></h3>
+    <p>真實二極體順向時電流隨電壓指數上升：$i_D = I_S\left(e^{v_D/nV_T} - 1\right)$，順向導通時括號裡的 $-1$ 可以忽略。$V_T = kT/q$ 在室溫約 $25\,\text{mV}$，$n$ 介於 1 和 2。</p>
+    <p>這條式子最有用的推論是：電流變 10 倍，電壓只多 $2.3nV_T$（$n = 1$ 時約 $60\,\text{mV}$）。所以導通的矽二極體電壓幾乎都落在 $0.6$～$0.8\,\text{V}$，這就是定電壓降模型的依據。</p>
+  </article>
+
+  <article class="concept" id="c-model-choice">
+    <h3>挑模型 <span class="en">Choosing a model</span></h3>
+    <p>指數模型最準，但和電阻接在一起時會變成超越方程式，只能用迭代或圖解法。定電壓降模型（constant-voltage-drop model）直接令 $V_D = 0.7\,\text{V}$，誤差通常只有幾個百分點，是手算偏壓的首選。理想模型則適合電源電壓遠大於 $0.7\,\text{V}$ 的情況，例如整流器。</p>
+  </article>
+
+  <article class="concept" id="c-small-signal">
+    <h3>小訊號模型 <span class="en">Small-signal model</span></h3>
+    <p>當直流偏壓 $I_D$ 上疊加一個很小的變化 $v_d$，指數曲線在偏壓點附近可以用切線近似，二極體就等效成一顆電阻 $r_d = nV_T/I_D$。$r_d$ 和偏壓電流成反比：偏壓越大，曲線越陡，等效電阻越小。</p>
+    <p>適用條件是 $v_d$ 的振幅只有幾 mV、遠小於 $nV_T$。分析時把直流和交流分開：直流算 $I_D$，交流把二極體換成 $r_d$、直流電源接地。</p>
+  </article>
+
+  <article class="concept" id="c-zener">
+    <h3>齊納二極體 <span class="en">Zener diode</span></h3>
+    <p>齊納二極體刻意工作在逆向崩潰區，那裡電流變化很大、電壓幾乎不變，所以拿來穩壓。模型是一個電壓源 $V_{Z0}$ 串聯小電阻 $r_z$；$r_z$ 越小，輸出電壓受負載和輸入變動的影響越小。</p>
+  </article>
+
+  <article class="concept" id="c-rectifier">
+    <h3>整流與峰值整流 <span class="en">Rectifiers and the peak rectifier</span></h3>
+    <p>整流器把交流變成單一極性。半波只用正半週；全波（中心抽頭或橋式）兩個半週都用，輸出頻率變成兩倍。設計時要看二極體能承受的峰值逆向電壓（PIV）。</p>
+    <p>在負載並聯電容就成為峰值整流器：二極體只在輸入接近峰值的短時間導通、替電容充電，其餘時間電容透過負載放電，輸出是帶小漣波的直流。電容越大、負載電流越小，漣波越小。</p>
+  </article>
+</section>
+
+<section id="formulas">
+  <h2>公式卡 <span class="en">Formula Cards</span></h2>
+  <div class="cards">
+    <figure class="formula wide" id="f-exponential">
+      <figcaption><span class="zh">二極體方程式</span> <span class="en">Diode equation</span></figcaption>
+      <div class="math">$$i_D = I_S\left(e^{v_D/nV_T} - 1\right) \approx I_S\,e^{v_D/nV_T}, \qquad V_T = \frac{kT}{q} \approx 25\,\text{mV}$$</div>
+      <p class="use"><b>何時用：</b>需要準確的順向電壓或電流，或做迭代。</p>
+      <p class="note"><b>注意：</b>近似式只在順向、$v_D$ 比 $nV_T$ 大很多時成立。</p>
+    </figure>
+
+    <figure class="formula" id="f-two-points">
+      <figcaption><span class="zh">兩點電流比</span> <span class="en">Voltage per decade</span></figcaption>
+      <div class="math">$$V_2 - V_1 = nV_T\ln\frac{I_2}{I_1} = 2.3\,nV_T\log_{10}\frac{I_2}{I_1}$$</div>
+      <p class="use"><b>何時用：</b>已知一點 $(I_1, V_1)$，求另一電流下的電壓；迭代法的核心。</p>
+      <p class="note"><b>注意：</b>$\ln$ 和 $\log_{10}$ 差 2.3 倍。</p>
+    </figure>
+
+    <figure class="formula" id="f-small-signal-resistance">
+      <figcaption><span class="zh">小訊號電阻</span> <span class="en">Small-signal resistance</span></figcaption>
+      <div class="math">$$r_d = \frac{nV_T}{I_D}$$</div>
+      <p class="use"><b>何時用：</b>求偏壓點附近的微小電壓、電流變化。</p>
+      <p class="note"><b>注意：</b>$I_D$ 是直流偏壓電流，不是總電流。</p>
+    </figure>
+
+    <figure class="formula" id="f-zener">
+      <figcaption><span class="zh">齊納模型</span> <span class="en">Zener model</span></figcaption>
+      <div class="math">$$V_Z = V_{Z0} + r_z I_Z$$</div>
+      <p class="use"><b>何時用：</b>穩壓電路的輸出電壓、線調整率、負載調整率。</p>
+      <p class="note"><b>注意：</b>必須確認 $I_Z$ 大於最小工作電流，否則離開崩潰區。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-piv">
+      <figcaption><span class="zh">峰值逆向電壓</span> <span class="en">Peak inverse voltage</span></figcaption>
+      <div class="math">$$\text{半波: } V_s, \qquad \text{中心抽頭: } 2V_s - V_D, \qquad \text{橋式: } V_s - V_D$$</div>
+      <p class="use"><b>何時用：</b>挑選二極體的耐壓規格。$V_s$ 是輸入（每一半繞組）的峰值。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-ripple">
+      <figcaption><span class="zh">峰值整流器漣波</span> <span class="en">Ripple voltage</span></figcaption>
+      <div class="math">$$V_r \approx \frac{V_p}{fCR}\ \ (\text{半波}), \qquad V_r \approx \frac{V_p}{2fCR}\ \ (\text{全波}), \qquad V_O \approx V_p - \tfrac12 V_r$$</div>
+      <p class="use"><b>何時用：</b>由漣波規格決定電容大小，或反過來求漣波。</p>
+      <p class="note"><b>注意：</b>$V_p$ 是扣掉二極體壓降後的輸出峰值；條件是 $V_r \ll V_p$。</p>
+    </figure>
+
+    <figure class="formula" id="f-conduction">
+      <figcaption><span class="zh">導通角</span> <span class="en">Conduction angle</span></figcaption>
+      <div class="math">$$\omega\Delta t \approx \sqrt{2V_r/V_p}$$</div>
+      <p class="use"><b>何時用：</b>估算二極體每週期導通多久，進而估算峰值電流。</p>
+    </figure>
+
+    <figure class="formula" id="f-half-wave-average">
+      <figcaption><span class="zh">半波整流平均值</span> <span class="en">Half-wave average</span></figcaption>
+      <div class="math">$$V_{\text{avg}} = \frac{V_p}{\pi}$$</div>
+      <p class="use"><b>何時用：</b>無濾波電容的半波整流輸出（理想二極體）。全波時乘 2。</p>
+    </figure>
+  </div>
+</section>
+
+<section id="examples">
+  <h2>例題 <span class="en">Worked Examples</span></h2>
+
+  <article class="example" id="ex-1">
+    <h3>例題 1　<span class="topic">理想二極體半波整流</span></h3>
+    <div class="problem" lang="en">
+      <p>A half-wave rectifier consists of an ideal diode in series with a $1\,\text{k}\Omega$ load, driven by $v_S = 10\sin\omega t\ \text{V}$. Find (a) the peak diode current, (b) the maximum reverse voltage across the diode, and (c) the average output voltage.</p>
+    </div>
+    <p class="hint"><b>提示：</b>正半週二極體導通、輸出跟著輸入；負半週截止，輸入電壓全部落在二極體上。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>正半週導通，$v_O = v_S$，峰值電流 $= 10\,\text{V}/1\,\text{k}\Omega = 10\,\text{mA}$。</li>
+        <li>負半週截止，$i = 0$，負載電壓為零，二極體承受 $v_S$，最大逆向電壓 $= 10\,\text{V}$（即 PIV）。</li>
+        <li>平均值：$V_{\text{avg}} = \dfrac{1}{2\pi}\displaystyle\int_0^{\pi} 10\sin\theta\,d\theta = \dfrac{10}{\pi} \approx 3.18\,\text{V}$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $10\,\text{mA}$　(b) $10\,\text{V}$　(c) $3.18\,\text{V}$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-2">
+    <h3>例題 2　<span class="topic">指數模型的迭代法</span></h3>
+    <div class="problem" lang="en">
+      <p>A diode conducts $1\,\text{mA}$ at $0.7\,\text{V}$ and has $n = 1$. It is connected in series with $R = 500\,\Omega$ across $V_{DD} = 3\,\text{V}$. Using iteration with the exponential model ($V_T = 25\,\text{mV}$), find $I_D$ and $V_D$. Compare with the constant-voltage-drop model.</p>
+    </div>
+    <p class="hint"><b>提示：</b>先猜 $V_D = 0.7\,\text{V}$ 算電流，再用兩點電流比更新電壓，來回兩三次就收斂。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>第一次：$V_D = 0.7\,\text{V}$，$I_D = (3 - 0.7)/500 = 4.600\,\text{mA}$。</li>
+        <li>更新電壓：$V_D = 0.7 + 0.025\ln(4.6/1) = 0.7382\,\text{V}$。</li>
+        <li>第二次：$I_D = (3 - 0.7382)/500 = 4.524\,\text{mA}$，$V_D = 0.7 + 0.025\ln 4.524 = 0.7377\,\text{V}$。</li>
+        <li>第三次：$I_D = (3 - 0.7377)/500 = 4.525\,\text{mA}$，電壓變化已小於 $0.1\,\text{mV}$，收斂。</li>
+        <li>定電壓降模型得到 $4.6\,\text{mA}$，和迭代結果只差約 $1.7\%$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>$I_D \approx 4.52\,\text{mA}$，$V_D \approx 0.738\,\text{V}$；定電壓降模型 $4.60\,\text{mA}$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-3">
+    <h3>例題 3　<span class="topic">小訊號模型求漣波</span></h3>
+    <div class="problem" lang="en">
+      <p>A diode with $n = 2$ is biased by a $10\,\text{V}$ supply through $R = 10\,\text{k}\Omega$. The supply has a $\pm 1\,\text{V}$ ripple superimposed on its DC value. Assuming $V_D \approx 0.7\,\text{V}$ at the bias point and $V_T = 25\,\text{mV}$, find the DC diode current, $r_d$, and the amplitude of the ripple across the diode.</p>
+    </div>
+    <p class="hint"><b>提示：</b>直流、交流分開算。交流電路是 $R$ 和 $r_d$ 的分壓。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>直流：$I_D = (10 - 0.7)/10\,\text{k} = 0.93\,\text{mA}$。</li>
+        <li>$r_d = nV_T/I_D = 2(25\,\text{mV})/0.93\,\text{mA} \approx 53.8\,\Omega$。</li>
+        <li>交流分壓：$v_d = \pm 1\,\text{V}\times\dfrac{53.8}{10\,000 + 53.8} \approx \pm 5.35\,\text{mV}$。</li>
+        <li>檢查：$5.35\,\text{mV}$ 遠小於 $nV_T = 50\,\text{mV}$，小訊號近似成立。</li>
+      </ol>
+      <p class="answer"><b>答：</b>$I_D = 0.93\,\text{mA}$，$r_d \approx 53.8\,\Omega$，二極體上的漣波約 $\pm 5.35\,\text{mV}$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-4">
+    <h3>例題 4　<span class="topic">峰值整流器的漣波與導通時間</span></h3>
+    <div class="problem" lang="en">
+      <p>A half-wave peak rectifier is fed by a $60\,\text{Hz}$ sinusoid with a peak of $12.7\,\text{V}$. The diode drop is $0.7\,\text{V}$, the load is $R = 1\,\text{k}\Omega$ and the filter capacitor is $C = 100\,\mu\text{F}$. Estimate (a) the ripple voltage, (b) the average output voltage, and (c) the diode conduction interval $\Delta t$. (d) What would the ripple be with a full-wave rectifier?</p>
+    </div>
+    <p class="hint"><b>提示：</b>$V_p = 12.7 - 0.7$。導通角公式算出來是弧度，要除以 $\omega$ 換成秒。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$V_p = 12.7 - 0.7 = 12\,\text{V}$。</li>
+        <li>$V_r \approx V_p/(fCR) = 12/(60 \times 100\times10^{-6} \times 1000) = 12/6 = 2\,\text{V}$。</li>
+        <li>$V_O \approx V_p - V_r/2 = 12 - 1 = 11\,\text{V}$。</li>
+        <li>$\omega\Delta t \approx \sqrt{2(2)/12} = 0.577\,\text{rad}$，$\Delta t = 0.577/(2\pi\cdot 60) \approx 1.53\,\text{ms}$，只佔週期 $16.7\,\text{ms}$ 的不到一成。</li>
+        <li>全波：放電時間減半，$V_r \approx V_p/(2fCR) = 1\,\text{V}$。</li>
+        <li>補充：用數值模擬實際放電曲線，半波的漣波約 $1.7\,\text{V}$。公式假設電容放電了整整一個週期，所以會稍微高估，考試用公式即可。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $V_r \approx 2\,\text{V}$　(b) $V_O \approx 11\,\text{V}$　(c) $\Delta t \approx 1.53\,\text{ms}$　(d) $V_r \approx 1\,\text{V}$</p>
+    </details>
+  </article>
+</section>
+
+<section id="pitfalls">
+  <h2>常見陷阱 <span class="en">Pitfalls</span></h2>
+  <ul class="pitfalls">
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>直接假設二極體導通，算完就交卷。</p>
+      <p class="right"><b>正確想法：</b>每個假設都要驗證：導通要 $i_D &gt; 0$，截止要 $v_D &lt; 0$。多顆二極體的電路尤其容易猜錯。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>小訊號電阻用總電流 $i_D$ 或交流電流 $i_d$ 計算。</p>
+      <p class="right"><b>正確想法：</b>$r_d = nV_T/I_D$ 裡的是直流偏壓電流。偏壓改變，$r_d$ 也跟著改變。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>漣波公式代輸入峰值，或全波整流也用 $V_p/(fCR)$。</p>
+      <p class="right"><b>正確想法：</b>$V_p$ 要扣掉二極體壓降（橋式要扣兩顆）。全波每半週充電一次，放電時間減半，所以分母多一個 2。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>中心抽頭全波整流的 PIV 當成 $V_s$。</p>
+      <p class="right"><b>正確想法：</b>截止的那顆二極體一端是 $-V_s$，另一端是輸出 $V_s - V_D$，所以 PIV 約 $2V_s - V_D$。橋式才是 $V_s - V_D$。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>用兩點電流比時把 $\ln$ 和 $\log_{10}$ 混用，或 $n = 2$ 的二極體仍用 $60\,\text{mV}$ 一個十倍。</p>
+      <p class="right"><b>正確想法：</b>每十倍電流的電壓差是 $2.3nV_T$，$n = 2$ 時約 $115\,\text{mV}$。先確認題目給的 $n$。</p>
+    </li>
+  </ul>
+</section>
+
+<section id="terms">
+  <h2>中英術語 <span class="en">Terms</span></h2>
+  <div class="table-wrap">
+    <table class="terms">
+      <thead><tr><th>中文</th><th>English</th><th>符號／備註</th></tr></thead>
+      <tbody>
+        <tr><td>二極體</td><td>diode</td><td>陽極 anode、陰極 cathode</td></tr>
+        <tr><td>理想二極體</td><td>ideal diode</td><td>導通短路、截止開路</td></tr>
+        <tr><td>順向偏壓</td><td>forward bias</td><td></td></tr>
+        <tr><td>逆向偏壓</td><td>reverse bias</td><td></td></tr>
+        <tr><td>崩潰區</td><td>breakdown region</td><td>齊納二極體的工作區</td></tr>
+        <tr><td>飽和電流</td><td>saturation current</td><td>$I_S$，又稱 scale current</td></tr>
+        <tr><td>熱電壓</td><td>thermal voltage</td><td>$V_T = kT/q \approx 25\,\text{mV}$</td></tr>
+        <tr><td>定電壓降模型</td><td>constant-voltage-drop model</td><td>$V_D = 0.7\,\text{V}$</td></tr>
+        <tr><td>迭代分析</td><td>iterative analysis</td><td></td></tr>
+        <tr><td>小訊號電阻</td><td>small-signal resistance</td><td>$r_d$，又稱 incremental resistance</td></tr>
+        <tr><td>偏壓點</td><td>bias point</td><td>又稱 quiescent point（Q 點）</td></tr>
+        <tr><td>齊納二極體</td><td>Zener diode</td><td>$V_Z$、$r_z$</td></tr>
+        <tr><td>整流器</td><td>rectifier</td><td></td></tr>
+        <tr><td>半波整流器</td><td>half-wave rectifier</td><td></td></tr>
+        <tr><td>全波整流器</td><td>full-wave rectifier</td><td>中心抽頭 center-tapped</td></tr>
+        <tr><td>橋式整流器</td><td>bridge rectifier</td><td>四顆二極體</td></tr>
+        <tr><td>峰值逆向電壓</td><td>peak inverse voltage</td><td>PIV</td></tr>
+        <tr><td>峰值整流器</td><td>peak rectifier</td><td>加濾波電容</td></tr>
+        <tr><td>漣波電壓</td><td>ripple voltage</td><td>$V_r$</td></tr>
+        <tr><td>導通角</td><td>conduction angle</td><td>$\omega\Delta t$</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2>自我檢測 <span class="en">Self-check</span></h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="b">
+      <legend>1. 二極體的直流偏壓電流 $I_D$ 變成兩倍，小訊號電阻 $r_d$ 會？</legend>
+      <label><input type="radio" name="q1" value="a"> 變成兩倍</label>
+      <label><input type="radio" name="q1" value="b"> 變成一半</label>
+      <label><input type="radio" name="q1" value="c"> 不變</label>
+      <label><input type="radio" name="q1" value="d"> 變成四倍</label>
+      <p class="explain">$r_d = nV_T/I_D$ 和 $I_D$ 成反比。偏壓越大，i-v 曲線在該點越陡，等效電阻越小。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="d">
+      <legend>2. $n = 1$ 的二極體，順向電流變成 10 倍，順向電壓大約增加多少？</legend>
+      <label><input type="radio" name="q2" value="a"> $25\,\text{mV}$</label>
+      <label><input type="radio" name="q2" value="b"> $0.7\,\text{V}$</label>
+      <label><input type="radio" name="q2" value="c"> $2.3\,\text{mV}$</label>
+      <label><input type="radio" name="q2" value="d"> $60\,\text{mV}$</label>
+      <p class="explain">$\Delta V = 2.3nV_T\log_{10}10 = 2.3 \times 25\,\text{mV} \approx 58\,\text{mV}$，常記成 60 mV。這也是導通電壓幾乎固定的原因。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="a">
+      <legend>3. 峰值整流器的 $V_p$、$R$、$C$ 都不變，從半波改成全波，漣波會？</legend>
+      <label><input type="radio" name="q3" value="a"> 約變成一半</label>
+      <label><input type="radio" name="q3" value="b"> 不變</label>
+      <label><input type="radio" name="q3" value="c"> 約變成兩倍</label>
+      <label><input type="radio" name="q3" value="d"> 變成零</label>
+      <p class="explain">全波每半個週期就充電一次，電容放電時間減半，$V_r \approx V_p/(2fCR)$。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="c">
+      <legend>4. 假設理想二極體導通，結果算出 $I_D = -2\,\text{mA}$。下一步應該？</legend>
+      <label><input type="radio" name="q4" value="a"> 答案有效，只是電流方向相反</label>
+      <label><input type="radio" name="q4" value="b"> 把電阻加大再算一次</label>
+      <label><input type="radio" name="q4" value="c"> 假設錯誤，改設截止重算並檢查 $v_D &lt; 0$</label>
+      <label><input type="radio" name="q4" value="d"> 改用指數模型就會變成正的</label>
+      <p class="explain">理想二極體導通時電流只能是正的。負電流代表假設矛盾，要改成截止重算，再驗證二極體電壓為負。</p>
+    </fieldset>
+  </div>
+</section>
+
+<footer class="note-foot"></footer>
+</main>
+</div>
+
+<footer class="site-foot">
+  內容依課本整理，例題數字自行設計並驗算。發現錯誤請到 GitHub 開 issue。
+</footer>
+</body>
+</html>

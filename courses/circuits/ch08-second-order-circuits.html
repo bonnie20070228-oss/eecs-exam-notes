@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch8 二階電路 | 電路學 | 電資考前講義庫</title>
+<meta name="description" content="電路學第 8 章二階電路考前講義：初值與終值、串聯與並聯 RLC、三種阻尼、步級響應，中英對照。">
+<meta name="note-id" content="circuits-ch08">
+<meta name="course" content="circuits">
+<meta name="chapter" content="8">
+<meta name="textbook" content="Alexander &amp; Sadiku, Fundamentals of Electric Circuits, Ch8 Second-Order Circuits">
+<meta name="updated" content="2026-11-04">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/style.css">
+<script defer src="../../assets/vendor/katex/katex.min.js"></script>
+<script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+<script defer src="../../assets/catalog.js"></script>
+<script defer src="../../assets/notes.js"></script>
+</head>
+<body class="note" data-course="circuits">
+<a class="skip" href="#main">跳到內容</a>
+<header class="site-bar">
+  <a class="brand" href="../../index.html">電資考前講義庫</a>
+  <nav aria-label="網站">
+    <a href="../../index.html">講義目錄</a>
+    <a href="../../glossary.html">術語表</a>
+  </nav>
+</header>
+
+<div class="note-layout">
+<nav class="toc" aria-label="本頁目錄"></nav>
+<main id="main">
+
+<header class="note-head">
+  <p class="crumb"><a href="../../index.html#circuits">電路學</a> / 第 8 章</p>
+  <h1>二階電路 <span class="en">Second-Order Circuits</span></h1>
+  <p class="lede">電路裡同時有電感和電容時，能量會在兩者之間來回交換，響應可能直接衰減，也可能邊振盪邊衰減。決定是哪一種的，只有 $\alpha$ 和 $\omega_0$ 兩個數字。</p>
+  <dl class="note-meta">
+    <dt>課本</dt><dd>Alexander &amp; Sadiku, <i>Fundamentals of Electric Circuits</i>，第 8 章</dd>
+    <dt>考試範圍</dt><dd>期中考（英文出題）</dd>
+    <dt>先備</dt><dd>第 7 章一階電路（RC、RL 的時間常數）、常係數二階微分方程</dd>
+  </dl>
+</header>
+
+<section id="overview">
+  <h2>本章地圖 <span class="en">Overview</span></h2>
+  <p>第 7 章的一階電路只有一個儲能元件，答案永遠是一個指數。這章多了一個儲能元件，微分方程變成二階，所以要兩個初始條件、兩個待定常數。解題流程每一題都一樣：求初值與終值，算 $\alpha$、$\omega_0$ 判斷阻尼型態，寫出對應的響應形式，最後用初始條件解常數。下一章開始的弦波穩態分析，則是只看「穩態」那一半。</p>
+  <ul class="scope">
+    <li>求 $v(0^+)$、$i(0^+)$、$dv(0^+)/dt$、$di(0^+)/dt$ 與 $v(\infty)$、$i(\infty)$</li>
+    <li>串聯 RLC 的零輸入響應</li>
+    <li>並聯 RLC 的零輸入響應</li>
+    <li>過阻尼、臨界阻尼、欠阻尼三種情況</li>
+    <li>串聯與並聯 RLC 的步級響應</li>
+  </ul>
+</section>
+
+<section id="concepts">
+  <h2>核心觀念 <span class="en">Key Ideas</span></h2>
+
+  <article class="concept" id="c-initial-final">
+    <h3>初值與終值 <span class="en">Initial and final values</span></h3>
+    <p>換路瞬間只有兩個量不會跳：電容電壓 $v_C$ 和電感電流 $i_L$，因為它們代表儲存的能量，能量不能在一瞬間改變。其他量（電容電流、電感電壓、電阻上的量）都可能跳。</p>
+    <p>二階電路還需要一階導數的初值。技巧是把導數換成「看得到的量」：$dv_C/dt = i_C/C$、$di_L/dt = v_L/L$，所以先在 $t = 0^+$ 用 KCL、KVL 求出 $i_C(0^+)$ 和 $v_L(0^+)$。終值則是直流穩態：電容開路、電感短路。</p>
+  </article>
+
+  <article class="concept" id="c-characteristic">
+    <h3>特徵方程式 <span class="en">Characteristic equation</span></h3>
+    <p>不論串聯或並聯，二階電路的方程式都整理成同一個樣子：$\dfrac{d^2x}{dt^2} + 2\alpha\dfrac{dx}{dt} + \omega_0^2 x = 0$。代入 $x = Ae^{st}$ 得到 $s^2 + 2\alpha s + \omega_0^2 = 0$，兩個根就決定了響應的長相。</p>
+    <p>$\alpha$ 是衰減的快慢（電阻消耗能量），$\omega_0$ 是 L 和 C 交換能量的自然頻率。兩種接法的 $\omega_0$ 都是 $1/\sqrt{LC}$，只有 $\alpha$ 的公式不同。</p>
+  </article>
+
+  <article class="concept" id="c-damping">
+    <h3>三種阻尼 <span class="en">Overdamped, critically damped, underdamped</span></h3>
+    <p>比較 $\alpha$ 和 $\omega_0$：$\alpha &gt; \omega_0$ 時兩根是相異實數，電阻消耗太快、來不及振盪，叫過阻尼；$\alpha = \omega_0$ 是重根，叫臨界阻尼，是「不振盪中最快回到零」的情況；$\alpha &lt; \omega_0$ 時兩根是共軛複數，會振盪，叫欠阻尼。</p>
+    <p>欠阻尼的振盪頻率不是 $\omega_0$，而是比較小的阻尼自然頻率 $\omega_d = \sqrt{\omega_0^2 - \alpha^2}$，振幅則以 $e^{-\alpha t}$ 衰減。</p>
+  </article>
+
+  <article class="concept" id="c-step">
+    <h3>步級響應 <span class="en">Step response</span></h3>
+    <p>加上直流電源後，完全響應 = 穩態響應 + 暫態響應。穩態就是終值 $x(\infty)$；暫態的形式和零輸入響應完全一樣，只是常數要重新解。</p>
+    <p>最常見的錯誤是解常數時漏掉穩態項：初始條件是套在「完全響應」上，$x(0) = x(\infty) + (\text{暫態在 } t=0 \text{ 的值})$。</p>
+  </article>
+</section>
+
+<section id="formulas">
+  <h2>公式卡 <span class="en">Formula Cards</span></h2>
+  <div class="cards">
+    <figure class="formula wide" id="f-characteristic">
+      <figcaption><span class="zh">特徵方程式與根</span> <span class="en">Characteristic roots</span></figcaption>
+      <div class="math">$$s^2 + 2\alpha s + \omega_0^2 = 0, \qquad s_{1,2} = -\alpha \pm \sqrt{\alpha^2 - \omega_0^2}$$</div>
+      <p class="use"><b>何時用：</b>每一題的第一步，用根的型態判斷阻尼。</p>
+    </figure>
+
+    <figure class="formula" id="f-series-rlc">
+      <figcaption><span class="zh">串聯 RLC 參數</span> <span class="en">Series RLC</span></figcaption>
+      <div class="math">$$\alpha = \frac{R}{2L}, \qquad \omega_0 = \frac{1}{\sqrt{LC}}$$</div>
+      <p class="use"><b>何時用：</b>R、L、C 串在同一個迴路。</p>
+      <p class="note"><b>注意：</b>R 越大，阻尼越大。</p>
+    </figure>
+
+    <figure class="formula" id="f-parallel-rlc">
+      <figcaption><span class="zh">並聯 RLC 參數</span> <span class="en">Parallel RLC</span></figcaption>
+      <div class="math">$$\alpha = \frac{1}{2RC}, \qquad \omega_0 = \frac{1}{\sqrt{LC}}$$</div>
+      <p class="use"><b>何時用：</b>R、L、C 接在同一對節點之間。</p>
+      <p class="note"><b>注意：</b>R 越大，阻尼越小，和串聯相反。</p>
+    </figure>
+
+    <figure class="formula" id="f-overdamped">
+      <figcaption><span class="zh">過阻尼</span> <span class="en">Overdamped, $\alpha &gt; \omega_0$</span></figcaption>
+      <div class="math">$$x(t) = A_1e^{s_1t} + A_2e^{s_2t}$$</div>
+      <p class="use"><b>何時用：</b>兩個相異負實根。</p>
+    </figure>
+
+    <figure class="formula" id="f-critically-damped">
+      <figcaption><span class="zh">臨界阻尼</span> <span class="en">Critically damped, $\alpha = \omega_0$</span></figcaption>
+      <div class="math">$$x(t) = (A_1 + A_2t)\,e^{-\alpha t}$$</div>
+      <p class="use"><b>何時用：</b>重根 $s = -\alpha$。</p>
+      <p class="note"><b>注意：</b>多出來的 $t$ 不能省略。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-underdamped">
+      <figcaption><span class="zh">欠阻尼</span> <span class="en">Underdamped, $\alpha &lt; \omega_0$</span></figcaption>
+      <div class="math">$$x(t) = e^{-\alpha t}\left(B_1\cos\omega_d t + B_2\sin\omega_d t\right), \qquad \omega_d = \sqrt{\omega_0^2 - \alpha^2}$$</div>
+      <p class="use"><b>何時用：</b>共軛複數根 $s = -\alpha \pm j\omega_d$。</p>
+      <p class="note"><b>注意：</b>振盪頻率是 $\omega_d$，不是 $\omega_0$。</p>
+    </figure>
+
+    <figure class="formula" id="f-initial-derivative">
+      <figcaption><span class="zh">導數的初值</span> <span class="en">Initial derivatives</span></figcaption>
+      <div class="math">$$\frac{dv_C(0^+)}{dt} = \frac{i_C(0^+)}{C}, \qquad \frac{di_L(0^+)}{dt} = \frac{v_L(0^+)}{L}$$</div>
+      <p class="use"><b>何時用：</b>解第二個常數需要的條件。</p>
+    </figure>
+
+    <figure class="formula" id="f-complete-response">
+      <figcaption><span class="zh">完全響應</span> <span class="en">Complete response</span></figcaption>
+      <div class="math">$$x(t) = x(\infty) + x_{\text{t}}(t)$$</div>
+      <p class="use"><b>何時用：</b>步級響應。$x_{\text{t}}$ 用上面三種形式之一。</p>
+      <p class="note"><b>注意：</b>常數用 $x(0)$、$dx(0)/dt$ 套在整個 $x(t)$ 上解。</p>
+    </figure>
+  </div>
+</section>
+
+<section id="examples">
+  <h2>例題 <span class="en">Worked Examples</span></h2>
+
+  <article class="example" id="ex-1">
+    <h3>例題 1　<span class="topic">串聯 RLC 零輸入，過阻尼</span></h3>
+    <div class="problem" lang="en">
+      <p>A source-free series RLC circuit has $R = 6\,\Omega$, $L = 1\,\text{H}$ and $C = 0.2\,\text{F}$. Let $i(t)$ be the loop current entering the positive terminal of the capacitor. At $t = 0$, the capacitor voltage is $v(0) = 10\,\text{V}$ and $i(0) = 0$. (a) Determine $\alpha$, $\omega_0$ and the type of damping. (b) Find $i(t)$ for $t &gt; 0$. (c) When does $|i(t)|$ reach its maximum, and what is that value?</p>
+    </div>
+    <p class="hint"><b>提示：</b>$t = 0^+$ 時 KVL：$L\,di/dt = -Ri - v$，用它求 $di(0^+)/dt$。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\alpha = R/2L = 6/2 = 3\,\text{s}^{-1}$，$\omega_0 = 1/\sqrt{LC} = 1/\sqrt{0.2} = \sqrt5 \approx 2.24\,\text{rad/s}$。$\alpha &gt; \omega_0$，過阻尼。</li>
+        <li>$s_{1,2} = -3 \pm \sqrt{9 - 5} = -3 \pm 2$，得 $s_1 = -1$、$s_2 = -5$。所以 $i(t) = A_1e^{-t} + A_2e^{-5t}$。</li>
+        <li>$i(0) = 0 \Rightarrow A_1 + A_2 = 0$。</li>
+        <li>$di(0^+)/dt = -(Ri(0) + v(0))/L = -(0 + 10)/1 = -10\,\text{A/s}$，所以 $-A_1 - 5A_2 = -10$。</li>
+        <li>代入 $A_2 = -A_1$：$4A_1 = -10$，$A_1 = -2.5$、$A_2 = 2.5$。</li>
+        <li>$i(t) = 2.5\left(e^{-5t} - e^{-t}\right)\,\text{A}$。負號代表電流實際是電容放電的方向。</li>
+        <li>極值：$di/dt = 2.5(-5e^{-5t} + e^{-t}) = 0 \Rightarrow e^{4t} = 5$，$t = \tfrac{\ln 5}{4} \approx 0.402\,\text{s}$。代回得 $i \approx -1.34\,\text{A}$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $\alpha = 3\,\text{s}^{-1}$、$\omega_0 = \sqrt5\,\text{rad/s}$，過阻尼　(b) $i(t) = 2.5(e^{-5t} - e^{-t})\,\text{A}$　(c) $t \approx 0.402\,\text{s}$ 時 $|i| \approx 1.34\,\text{A}$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-2">
+    <h3>例題 2　<span class="topic">並聯 RLC 零輸入，臨界阻尼</span></h3>
+    <div class="problem" lang="en">
+      <p>In a source-free parallel RLC circuit, $R = 1\,\Omega$, $L = 1\,\text{H}$ and $C = 0.25\,\text{F}$. The capacitor voltage is $v(0) = 5\,\text{V}$ and the inductor current is $i_L(0) = 0$ ($i_L$ flows from the top node through $L$). Find $v(t)$ for $t &gt; 0$, the time at which $v(t)$ first crosses zero, and the minimum value of $v(t)$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>並聯時 $t = 0^+$ 的 KCL：$C\,dv/dt = -v/R - i_L$。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\alpha = 1/2RC = 1/(2\cdot 1\cdot 0.25) = 2\,\text{s}^{-1}$，$\omega_0 = 1/\sqrt{0.25} = 2\,\text{rad/s}$。$\alpha = \omega_0$，臨界阻尼。</li>
+        <li>$v(t) = (A_1 + A_2t)e^{-2t}$，$v(0) = A_1 = 5$。</li>
+        <li>$dv(0^+)/dt = -(v(0)/R + i_L(0))/C = -(5 + 0)/0.25 = -20\,\text{V/s}$。</li>
+        <li>$dv/dt = (A_2 - 2A_1 - 2A_2t)e^{-2t}$，在 $t = 0$：$A_2 - 2A_1 = -20$，$A_2 = -10$。</li>
+        <li>$v(t) = (5 - 10t)e^{-2t}\,\text{V}$，在 $t = 0.5\,\text{s}$ 變號。</li>
+        <li>極小值：$dv/dt = (-20 + 20t)e^{-2t} = 0 \Rightarrow t = 1\,\text{s}$，$v(1) = -5e^{-2} \approx -0.677\,\text{V}$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>$v(t) = (5 - 10t)e^{-2t}\,\text{V}$；$t = 0.5\,\text{s}$ 過零；最小值 $-0.677\,\text{V}$（$t = 1\,\text{s}$）</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-3">
+    <h3>例題 3　<span class="topic">串聯 RLC 步級響應，欠阻尼</span></h3>
+    <div class="problem" lang="en">
+      <p>A $12\,\text{V}$ DC source is switched on at $t = 0$ into a series RLC circuit with $R = 2\,\Omega$, $L = 1\,\text{H}$ and $C = 0.2\,\text{F}$. The circuit is initially at rest. Find (a) the capacitor voltage $v(t)$, (b) the current $i(t)$, and (c) the peak value of $v(t)$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>終值 $v(\infty) = 12\,\text{V}$（電容開路）。$dv(0^+)/dt = i(0^+)/C$。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\alpha = 2/2 = 1\,\text{s}^{-1}$，$\omega_0 = \sqrt5\,\text{rad/s}$，欠阻尼，$\omega_d = \sqrt{5 - 1} = 2\,\text{rad/s}$。</li>
+        <li>$v(t) = 12 + e^{-t}(B_1\cos 2t + B_2\sin 2t)$。</li>
+        <li>$v(0) = 0$：$12 + B_1 = 0$，$B_1 = -12$。</li>
+        <li>$i(0) = 0$，所以 $dv(0^+)/dt = 0$：$-B_1 + 2B_2 = 0$，$B_2 = -6$。</li>
+        <li>$v(t) = 12 - e^{-t}(12\cos 2t + 6\sin 2t)\,\text{V}$。</li>
+        <li>$i = C\,dv/dt$。微分整理後 $dv/dt = 30e^{-t}\sin 2t$，所以 $i(t) = 0.2\cdot 30\,e^{-t}\sin 2t = 6e^{-t}\sin 2t\,\text{A}$。</li>
+        <li>$v$ 的峰值出現在 $i = 0$ 的第一個正時刻：$2t = \pi$，$t = \pi/2$。$v(\pi/2) = 12 + 12e^{-\pi/2} \approx 14.49\,\text{V}$，超越量約 $20.8\%$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $v(t) = 12 - e^{-t}(12\cos 2t + 6\sin 2t)\,\text{V}$　(b) $i(t) = 6e^{-t}\sin 2t\,\text{A}$　(c) $14.49\,\text{V}$（$t \approx 1.57\,\text{s}$）</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-4">
+    <h3>例題 4　<span class="topic">由阻尼要求決定 R</span></h3>
+    <div class="problem" lang="en">
+      <p>A series RLC circuit has $L = 0.5\,\text{H}$ and $C = 2\,\text{mF}$. (a) Find the value of $R$ that makes the circuit critically damped. (b) If $R$ is reduced to half of that value, determine $\alpha$ and the damped natural frequency $\omega_d$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>臨界阻尼就是 $\alpha = \omega_0$，再把 $\alpha = R/2L$ 反解 $R$。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\omega_0 = 1/\sqrt{0.5 \times 0.002} = 1/\sqrt{0.001} \approx 31.62\,\text{rad/s}$。</li>
+        <li>臨界阻尼：$R/2L = \omega_0$，$R = 2L\omega_0 = 2(0.5)(31.62) \approx 31.6\,\Omega$。</li>
+        <li>$R$ 減半為 $15.8\,\Omega$：$\alpha = 15.8/(2\times 0.5) \approx 15.81\,\text{s}^{-1}$，小於 $\omega_0$，變成欠阻尼。</li>
+        <li>$\omega_d = \sqrt{1000 - 250} = \sqrt{750} \approx 27.39\,\text{rad/s}$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $R \approx 31.6\,\Omega$　(b) $\alpha \approx 15.8\,\text{s}^{-1}$，$\omega_d \approx 27.4\,\text{rad/s}$</p>
+    </details>
+  </article>
+</section>
+
+<section id="pitfalls">
+  <h2>常見陷阱 <span class="en">Pitfalls</span></h2>
+  <ul class="pitfalls">
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>步級響應解常數時，用 $x_{\text{t}}(0) = x(0)$。</p>
+      <p class="right"><b>正確想法：</b>初始條件屬於完全響應：$x(0) = x(\infty) + x_{\text{t}}(0)$。例題 3 就是因為這樣才得到 $B_1 = -12$ 而不是 $0$。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>並聯 RLC 也用 $\alpha = R/2L$，或以為 R 變大一定更阻尼。</p>
+      <p class="right"><b>正確想法：</b>並聯是 $\alpha = 1/2RC$。並聯時 R 越大，流過電阻的電流越小、消耗越少，反而越容易振盪。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>以為換路瞬間電容電流、電感電壓也連續。</p>
+      <p class="right"><b>正確想法：</b>只有 $v_C$ 和 $i_L$ 連續。$i_C(0^+)$、$v_L(0^+)$ 要在 $t = 0^+$ 的電路上重新用 KCL、KVL 求。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>欠阻尼響應寫成 $e^{-\alpha t}\cos\omega_0 t$。</p>
+      <p class="right"><b>正確想法：</b>振盪頻率是 $\omega_d = \sqrt{\omega_0^2 - \alpha^2}$。只有 $\alpha = 0$（無損 LC）時兩者才相同。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>求 $dv/dt(0^+)$ 時用了 $t = 0^-$ 的電路，或忘記電流方向和電壓極性的對應。</p>
+      <p class="right"><b>正確想法：</b>先畫出 $t = 0^+$ 的電路，標好 $v_C$ 極性與 $i_C$ 方向（被動符號慣例），再列方程式。題目定義的方向不同，常數的正負號就會不同。</p>
+    </li>
+  </ul>
+</section>
+
+<section id="terms">
+  <h2>中英術語 <span class="en">Terms</span></h2>
+  <div class="table-wrap">
+    <table class="terms">
+      <thead><tr><th>中文</th><th>English</th><th>符號／備註</th></tr></thead>
+      <tbody>
+        <tr><td>二階電路</td><td>second-order circuit</td><td>含兩個無法合併的儲能元件</td></tr>
+        <tr><td>零輸入響應</td><td>source-free response</td><td>又稱 natural response</td></tr>
+        <tr><td>步級響應</td><td>step response</td><td>直流電源突然接上</td></tr>
+        <tr><td>特徵方程式</td><td>characteristic equation</td><td>$s^2 + 2\alpha s + \omega_0^2 = 0$</td></tr>
+        <tr><td>奈培頻率</td><td>neper frequency</td><td>$\alpha$，又稱 damping factor，單位 Np/s</td></tr>
+        <tr><td>無阻尼自然頻率</td><td>undamped natural frequency</td><td>$\omega_0 = 1/\sqrt{LC}$</td></tr>
+        <tr><td>阻尼自然頻率</td><td>damped natural frequency</td><td>$\omega_d = \sqrt{\omega_0^2 - \alpha^2}$</td></tr>
+        <tr><td>過阻尼</td><td>overdamped</td><td>$\alpha &gt; \omega_0$</td></tr>
+        <tr><td>臨界阻尼</td><td>critically damped</td><td>$\alpha = \omega_0$</td></tr>
+        <tr><td>欠阻尼</td><td>underdamped</td><td>$\alpha &lt; \omega_0$</td></tr>
+        <tr><td>暫態響應</td><td>transient response</td><td>會隨時間消失的部分</td></tr>
+        <tr><td>穩態響應</td><td>steady-state response</td><td>$t\to\infty$ 時剩下的部分</td></tr>
+        <tr><td>完全響應</td><td>complete response</td><td>暫態 + 穩態</td></tr>
+        <tr><td>初值</td><td>initial value</td><td>$x(0^+)$</td></tr>
+        <tr><td>終值</td><td>final value</td><td>$x(\infty)$</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2>自我檢測 <span class="en">Self-check</span></h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="c">
+      <legend>1. 並聯 RLC 電路中把 R 調大，會發生什麼事？</legend>
+      <label><input type="radio" name="q1" value="a"> 阻尼變大，更不容易振盪</label>
+      <label><input type="radio" name="q1" value="b"> $\omega_0$ 變大</label>
+      <label><input type="radio" name="q1" value="c"> $\alpha$ 變小，更容易振盪</label>
+      <label><input type="radio" name="q1" value="d"> 完全沒有影響</label>
+      <p class="explain">並聯 $\alpha = 1/2RC$，R 變大 $\alpha$ 變小。$\omega_0 = 1/\sqrt{LC}$ 和 R 無關。A 是串聯電路的情況。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="d">
+      <legend>2. 開關切換的瞬間，下列哪一個量一定連續？</legend>
+      <label><input type="radio" name="q2" value="a"> 電容電流 $i_C$</label>
+      <label><input type="radio" name="q2" value="b"> 電感電壓 $v_L$</label>
+      <label><input type="radio" name="q2" value="c"> 電阻電流 $i_R$</label>
+      <label><input type="radio" name="q2" value="d"> 電容電壓 $v_C$</label>
+      <p class="explain">$v_C$ 對應電容儲存的能量 $\tfrac12 Cv_C^2$，不能瞬間改變。另一個連續的量是電感電流 $i_L$。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="a">
+      <legend>3. 欠阻尼響應的振盪角頻率是多少？</legend>
+      <label><input type="radio" name="q3" value="a"> $\sqrt{\omega_0^2 - \alpha^2}$</label>
+      <label><input type="radio" name="q3" value="b"> $\omega_0$</label>
+      <label><input type="radio" name="q3" value="c"> $\alpha$</label>
+      <label><input type="radio" name="q3" value="d"> $\sqrt{\alpha^2 - \omega_0^2}$</label>
+      <p class="explain">共軛根 $s = -\alpha \pm j\omega_d$，虛部 $\omega_d = \sqrt{\omega_0^2 - \alpha^2}$ 就是振盪頻率。D 在欠阻尼時根號內是負的。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="b">
+      <legend>4. 某二階電路的特徵根為 $s_1 = s_2 = -3$，它屬於哪一種？</legend>
+      <label><input type="radio" name="q4" value="a"> 過阻尼</label>
+      <label><input type="radio" name="q4" value="b"> 臨界阻尼</label>
+      <label><input type="radio" name="q4" value="c"> 欠阻尼</label>
+      <label><input type="radio" name="q4" value="d"> 無阻尼</label>
+      <p class="explain">重根代表 $\alpha = \omega_0 = 3$，響應形式是 $(A_1 + A_2t)e^{-3t}$。</p>
+    </fieldset>
+  </div>
+</section>
+
+<footer class="note-foot"></footer>
+</main>
+</div>
+
+<footer class="site-foot">
+  內容依課本整理，例題數字自行設計並驗算。發現錯誤請到 GitHub 開 issue。
+</footer>
+</body>
+</html>

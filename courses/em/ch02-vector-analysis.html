@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ch2 向量分析 | 電磁學 | 電資考前講義庫</title>
+<meta name="description" content="電磁學第 2 章向量分析考前講義：內外積、三種座標系、梯度、散度定理、旋度與 Stokes 定理，中英對照。">
+<meta name="note-id" content="em-ch02">
+<meta name="course" content="em">
+<meta name="chapter" content="2">
+<meta name="textbook" content="David K. Cheng, Fundamentals of Engineering Electromagnetics, Ch2 Vector Analysis">
+<meta name="updated" content="2026-11-04">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="../../assets/vendor/katex/katex.min.css">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../../assets/style.css">
+<script defer src="../../assets/vendor/katex/katex.min.js"></script>
+<script defer src="../../assets/vendor/katex/auto-render.min.js"></script>
+<script defer src="../../assets/catalog.js"></script>
+<script defer src="../../assets/notes.js"></script>
+</head>
+<body class="note" data-course="em">
+<a class="skip" href="#main">跳到內容</a>
+<header class="site-bar">
+  <a class="brand" href="../../index.html">電資考前講義庫</a>
+  <nav aria-label="網站">
+    <a href="../../index.html">講義目錄</a>
+    <a href="../../glossary.html">術語表</a>
+  </nav>
+</header>
+
+<div class="note-layout">
+<nav class="toc" aria-label="本頁目錄"></nav>
+<main id="main">
+
+<header class="note-head">
+  <p class="crumb"><a href="../../index.html#em">電磁學</a> / 第 2 章</p>
+  <h1>向量分析 <span class="en">Vector Analysis</span></h1>
+  <p class="lede">電磁學的定律全部寫成散度和旋度，這章就是在學這套語言。看懂這章，後面的 Gauss 定律和 Ampère 定律只是「把電場代進去」。</p>
+  <dl class="note-meta">
+    <dt>課本</dt><dd>Cheng, <i>Fundamentals of Engineering Electromagnetics</i>，第 2 章</dd>
+    <dt>考試範圍</dt><dd>期中考一（英文出題）</dd>
+    <dt>先備</dt><dd>微積分的偏微分、重積分；行列式</dd>
+  </dl>
+</header>
+
+<section id="overview">
+  <h2>本章地圖 <span class="en">Overview</span></h2>
+  <p>整章其實只有三件事：怎麼描述向量（座標系）、怎麼對向量場做微分（梯度、散度、旋度）、以及兩個把「體積分」和「面積分」、「面積分」和「線積分」互換的定理。第 3 章靜電場開始，每一條定律都會用到這裡的公式卡。</p>
+  <ul class="scope">
+    <li>向量的加減、內積、外積，以及三重積</li>
+    <li>三種正交座標系：直角、圓柱、球座標，與微分長度、面積、體積</li>
+    <li>純量場的梯度與方向導數</li>
+    <li>向量場的散度與散度定理</li>
+    <li>向量場的旋度與 Stokes 定理</li>
+    <li>兩個零恆等式與 Helmholtz 定理（觀念題常考）</li>
+  </ul>
+</section>
+
+<section id="concepts">
+  <h2>核心觀念 <span class="en">Key Ideas</span></h2>
+
+  <article class="concept" id="c-products">
+    <h3>內積與外積 <span class="en">Dot and cross products</span></h3>
+    <p>內積（dot product）在問「$\mathbf{A}$ 有多少落在 $\mathbf{B}$ 的方向上」，結果是純量：$\mathbf{A}\cdot\mathbf{B} = AB\cos\theta_{AB}$。兩向量垂直時內積為零，這是判斷垂直最快的方法。</p>
+    <p>外積（cross product）的結果是向量，大小是兩向量張出的平行四邊形面積 $AB\sin\theta_{AB}$，方向用右手定則決定，並且垂直於兩者。外積不滿足交換律：$\mathbf{B}\times\mathbf{A} = -\mathbf{A}\times\mathbf{B}$。</p>
+  </article>
+
+  <article class="concept" id="c-coordinates">
+    <h3>正交座標系 <span class="en">Orthogonal coordinate systems</span></h3>
+    <p>三種座標系都是「三個互相垂直的單位向量」，差別在於圓柱和球座標的單位向量方向會隨位置改變。例如 $\mathbf{a}_r$ 在 $\phi = 0$ 指向 $x$ 軸、在 $\phi = \pi/2$ 指向 $y$ 軸。</p>
+    <p>度量係數（metric coefficient）$h_1, h_2, h_3$ 把「座標變化量」換成「真的長度」：圓柱座標裡 $\phi$ 改變 $d\phi$，實際走的弧長是 $r\,d\phi$，所以 $h_2 = r$。散度、旋度公式裡那些 $1/r$、$\sin\theta$ 全部來自度量係數。</p>
+  </article>
+
+  <article class="concept" id="c-gradient">
+    <h3>梯度 <span class="en">Gradient</span></h3>
+    <p>梯度作用在純量場上，得到一個向量：方向是純量增加最快的方向，大小是那個方向上的增加率。它一定垂直於等值面（例如等位面）。</p>
+    <p>想知道沿任意方向 $\mathbf{a}_\ell$ 的變化率，只要做內積：$dV/d\ell = \nabla V\cdot\mathbf{a}_\ell$，這叫方向導數（directional derivative）。</p>
+  </article>
+
+  <article class="concept" id="c-divergence">
+    <h3>散度與散度定理 <span class="en">Divergence and the divergence theorem</span></h3>
+    <p>散度在量「一個點像不像源頭」：取一個很小的封閉曲面包住那個點，算淨流出量再除以體積。結果為正代表有東西往外冒（源），為負代表被吸進去（匯），為零代表進出相等。</p>
+    <p>$$\nabla\cdot\mathbf{A} = \lim_{\Delta v\to 0}\frac{\oint_S \mathbf{A}\cdot d\mathbf{s}}{\Delta v}$$</p>
+    <p>把很多小體積加起來，內部相鄰的面通量互相抵消，只剩最外層，就得到散度定理：體積內散度的總和 = 穿出邊界的總通量。</p>
+  </article>
+
+  <article class="concept" id="c-curl">
+    <h3>旋度與 Stokes 定理 <span class="en">Curl and Stokes's theorem</span></h3>
+    <p>旋度在量「一個點附近的場有沒有在打轉」：在小面積的邊界繞一圈算環量（circulation），除以面積，取讓結果最大的那個面方向，就是旋度的方向。想像在水流裡放一個小風車，風車轉得越快、旋度越大，轉軸就是旋度方向。</p>
+    <p>同樣把很多小面積拼起來，內部的邊互相抵消，得到 Stokes 定理：曲面上旋度的通量 = 沿邊界的環量。邊界繞行方向和曲面法向量要符合右手定則。</p>
+  </article>
+
+  <article class="concept" id="c-helmholtz">
+    <h3>零恆等式與 Helmholtz 定理 <span class="en">Null identities and Helmholtz's theorem</span></h3>
+    <p>兩個零恆等式：梯度場沒有旋度 $\nabla\times(\nabla V) = 0$；旋度場沒有散度 $\nabla\cdot(\nabla\times\mathbf{A}) = 0$。反過來說：無旋場（irrotational）一定可以寫成某純量的梯度，無源場（solenoidal）一定可以寫成某向量的旋度。</p>
+    <p>Helmholtz 定理說：一個在無窮遠處趨近於零的向量場，只要知道它的散度和旋度，就被唯一決定。所以後面學電磁學時，每種場都只要記「它的散度是什麼、旋度是什麼」。</p>
+  </article>
+</section>
+
+<section id="formulas">
+  <h2>公式卡 <span class="en">Formula Cards</span></h2>
+  <div class="cards">
+    <figure class="formula" id="f-dot-product">
+      <figcaption><span class="zh">內積</span> <span class="en">Dot product</span></figcaption>
+      <div class="math">$$\mathbf{A}\cdot\mathbf{B} = A_xB_x + A_yB_y + A_zB_z = AB\cos\theta_{AB}$$</div>
+      <p class="use"><b>何時用：</b>求夾角、求投影、判斷是否垂直。</p>
+    </figure>
+
+    <figure class="formula" id="f-cross-product">
+      <figcaption><span class="zh">外積</span> <span class="en">Cross product</span></figcaption>
+      <div class="math">$$\mathbf{A}\times\mathbf{B} = \begin{vmatrix}\mathbf{a}_x &amp; \mathbf{a}_y &amp; \mathbf{a}_z\\ A_x &amp; A_y &amp; A_z\\ B_x &amp; B_y &amp; B_z\end{vmatrix}$$</div>
+      <p class="use"><b>何時用：</b>求同時垂直於兩向量的方向、平行四邊形面積。</p>
+      <p class="note"><b>注意：</b>行列式展開時中間那項要加負號。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-differential-length">
+      <figcaption><span class="zh">微分長度</span> <span class="en">Differential length</span></figcaption>
+      <div class="math">$$\begin{aligned}
+      d\boldsymbol{\ell} &amp;= \mathbf{a}_x\,dx + \mathbf{a}_y\,dy + \mathbf{a}_z\,dz \\
+      &amp;= \mathbf{a}_r\,dr + \mathbf{a}_\phi\,r\,d\phi + \mathbf{a}_z\,dz \\
+      &amp;= \mathbf{a}_R\,dR + \mathbf{a}_\theta\,R\,d\theta + \mathbf{a}_\phi\,R\sin\theta\,d\phi
+      \end{aligned}$$</div>
+      <p class="use"><b>何時用：</b>線積分；度量係數就是各項前面的 $1, r, R, R\sin\theta$。</p>
+      <p class="note"><b>注意：</b>Cheng 用 $r$ 表示圓柱座標的半徑、$R$ 表示球座標的半徑。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-gradient">
+      <figcaption><span class="zh">梯度</span> <span class="en">Gradient</span></figcaption>
+      <div class="math">$$\begin{aligned}
+      \nabla V &amp;= \mathbf{a}_x\frac{\partial V}{\partial x} + \mathbf{a}_y\frac{\partial V}{\partial y} + \mathbf{a}_z\frac{\partial V}{\partial z} \\
+      &amp;= \mathbf{a}_r\frac{\partial V}{\partial r} + \mathbf{a}_\phi\frac{1}{r}\frac{\partial V}{\partial \phi} + \mathbf{a}_z\frac{\partial V}{\partial z} \\
+      &amp;= \mathbf{a}_R\frac{\partial V}{\partial R} + \mathbf{a}_\theta\frac{1}{R}\frac{\partial V}{\partial \theta} + \mathbf{a}_\phi\frac{1}{R\sin\theta}\frac{\partial V}{\partial \phi}
+      \end{aligned}$$</div>
+      <p class="use"><b>何時用：</b>由電位求電場（第 3 章 $\mathbf{E} = -\nabla V$）、求方向導數 $\nabla V\cdot\mathbf{a}_\ell$。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-divergence">
+      <figcaption><span class="zh">散度</span> <span class="en">Divergence</span></figcaption>
+      <div class="math">$$\begin{aligned}
+      \nabla\cdot\mathbf{A} &amp;= \frac{\partial A_x}{\partial x} + \frac{\partial A_y}{\partial y} + \frac{\partial A_z}{\partial z} \\
+      &amp;= \frac{1}{r}\frac{\partial (rA_r)}{\partial r} + \frac{1}{r}\frac{\partial A_\phi}{\partial \phi} + \frac{\partial A_z}{\partial z} \\
+      &amp;= \frac{1}{R^2}\frac{\partial (R^2A_R)}{\partial R} + \frac{1}{R\sin\theta}\frac{\partial (A_\theta\sin\theta)}{\partial \theta} + \frac{1}{R\sin\theta}\frac{\partial A_\phi}{\partial \phi}
+      \end{aligned}$$</div>
+      <p class="use"><b>何時用：</b>判斷場有沒有源、搭配散度定理換積分。</p>
+      <p class="note"><b>注意：</b>圓柱的 $r$ 和球的 $R^2$ 要先乘進去再微分。</p>
+    </figure>
+
+    <figure class="formula" id="f-divergence-theorem">
+      <figcaption><span class="zh">散度定理</span> <span class="en">Divergence theorem</span></figcaption>
+      <div class="math">$$\int_V \nabla\cdot\mathbf{A}\,dv = \oint_S \mathbf{A}\cdot d\mathbf{s}$$</div>
+      <p class="use"><b>何時用：</b>體積分難算、表面積分好算（或反過來）時互換。</p>
+      <p class="note"><b>注意：</b>$S$ 必須是包住 $V$ 的封閉曲面，$d\mathbf{s}$ 一律朝外。</p>
+    </figure>
+
+    <figure class="formula" id="f-stokes">
+      <figcaption><span class="zh">Stokes 定理</span> <span class="en">Stokes's theorem</span></figcaption>
+      <div class="math">$$\int_S (\nabla\times\mathbf{A})\cdot d\mathbf{s} = \oint_C \mathbf{A}\cdot d\boldsymbol{\ell}$$</div>
+      <p class="use"><b>何時用：</b>面積分和線積分互換；之後推導 Ampère 定律的積分形式。</p>
+      <p class="note"><b>注意：</b>$C$ 的繞行方向和 $d\mathbf{s}$ 符合右手定則。</p>
+    </figure>
+
+    <figure class="formula wide" id="f-curl">
+      <figcaption><span class="zh">旋度</span> <span class="en">Curl</span></figcaption>
+      <div class="math">$$\nabla\times\mathbf{A} = \frac{1}{h_1h_2h_3}\begin{vmatrix}\mathbf{a}_{u_1}h_1 &amp; \mathbf{a}_{u_2}h_2 &amp; \mathbf{a}_{u_3}h_3\\[6pt] \dfrac{\partial}{\partial u_1} &amp; \dfrac{\partial}{\partial u_2} &amp; \dfrac{\partial}{\partial u_3}\\[6pt] h_1A_1 &amp; h_2A_2 &amp; h_3A_3\end{vmatrix}$$</div>
+      <p class="use"><b>何時用：</b>任何座標系都套這一張。直角 $(1,1,1)$、圓柱 $(1,r,1)$、球 $(1,R,R\sin\theta)$。</p>
+      <p class="note"><b>注意：</b>只有一個分量時（例如只有 $A_\phi$），直接用行列式算比背公式快。</p>
+    </figure>
+
+    <figure class="formula" id="f-null-identities">
+      <figcaption><span class="zh">兩個零恆等式</span> <span class="en">Null identities</span></figcaption>
+      <div class="math">$$\nabla\times(\nabla V) \equiv 0, \qquad \nabla\cdot(\nabla\times\mathbf{A}) \equiv 0$$</div>
+      <p class="use"><b>何時用：</b>判斷場能不能寫成梯度或旋度；觀念選擇題。</p>
+    </figure>
+  </div>
+</section>
+
+<section id="examples">
+  <h2>例題 <span class="en">Worked Examples</span></h2>
+
+  <article class="example" id="ex-1">
+    <h3>例題 1　<span class="topic">內積、外積與夾角</span></h3>
+    <div class="problem" lang="en">
+      <p>Given $\mathbf{A} = \mathbf{a}_x2 - \mathbf{a}_y3 + \mathbf{a}_z$ and $\mathbf{B} = \mathbf{a}_x + \mathbf{a}_y4 - \mathbf{a}_z2$, find (a) $\mathbf{A}\cdot\mathbf{B}$, (b) the angle between $\mathbf{A}$ and $\mathbf{B}$, and (c) $\mathbf{A}\times\mathbf{B}$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>夾角用內積公式反推；外積算完用 $\mathbf{A}\cdot(\mathbf{A}\times\mathbf{B}) = 0$ 檢查。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\mathbf{A}\cdot\mathbf{B} = (2)(1) + (-3)(4) + (1)(-2) = 2 - 12 - 2 = -12$。</li>
+        <li>$A = \sqrt{4+9+1} = \sqrt{14}$，$B = \sqrt{1+16+4} = \sqrt{21}$。</li>
+        <li>$\cos\theta_{AB} = \dfrac{-12}{\sqrt{14}\sqrt{21}} = -0.700$，所以 $\theta_{AB} = 134.4^\circ$（內積為負，夾角大於 $90^\circ$）。</li>
+        <li>外積：$\mathbf{a}_x[(-3)(-2) - (1)(4)] - \mathbf{a}_y[(2)(-2) - (1)(1)] + \mathbf{a}_z[(2)(4) - (-3)(1)] = \mathbf{a}_x2 + \mathbf{a}_y5 + \mathbf{a}_z11$。</li>
+        <li>檢查：$\mathbf{A}\cdot(\mathbf{A}\times\mathbf{B}) = 4 - 15 + 11 = 0$，確實垂直。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $-12$　(b) $134.4^\circ$　(c) $\mathbf{a}_x2 + \mathbf{a}_y5 + \mathbf{a}_z11$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-2">
+    <h3>例題 2　<span class="topic">梯度與方向導數</span></h3>
+    <div class="problem" lang="en">
+      <p>For the scalar field $V = x^2y + 2yz$, find (a) $\nabla V$ at $P(1, 2, -1)$, (b) the rate of change of $V$ at $P$ in the direction of $\mathbf{a}_x2 + \mathbf{a}_y + \mathbf{a}_z2$, and (c) the maximum rate of change of $V$ at $P$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>方向一定要先換成單位向量。最大變化率就是梯度的大小。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\nabla V = \mathbf{a}_x(2xy) + \mathbf{a}_y(x^2 + 2z) + \mathbf{a}_z(2y)$。</li>
+        <li>代入 $P(1,2,-1)$：$\nabla V = \mathbf{a}_x4 + \mathbf{a}_y(1-2) + \mathbf{a}_z4 = \mathbf{a}_x4 - \mathbf{a}_y + \mathbf{a}_z4$。</li>
+        <li>方向的大小是 $\sqrt{4+1+4} = 3$，單位向量 $\mathbf{a}_\ell = (\mathbf{a}_x2 + \mathbf{a}_y + \mathbf{a}_z2)/3$。</li>
+        <li>$dV/d\ell = \nabla V\cdot\mathbf{a}_\ell = (8 - 1 + 8)/3 = 5$。</li>
+        <li>最大變化率 $= |\nabla V| = \sqrt{16 + 1 + 16} = \sqrt{33} \approx 5.74$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>(a) $\mathbf{a}_x4 - \mathbf{a}_y + \mathbf{a}_z4$　(b) $5$（每單位長度）　(c) $\sqrt{33}\approx 5.74$</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-3">
+    <h3>例題 3　<span class="topic">驗證散度定理</span></h3>
+    <div class="problem" lang="en">
+      <p>Given $\mathbf{A} = \mathbf{a}_x x^2 + \mathbf{a}_y xy + \mathbf{a}_z yz$, verify the divergence theorem over the unit cube $0 \le x, y, z \le 1$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>兩邊分開算。面積分有六個面，先想清楚每個面的 $d\mathbf{s}$ 朝哪裡，很多面會直接是零。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>$\nabla\cdot\mathbf{A} = 2x + x + y = 3x + y$。</li>
+        <li>體積分：$\int_0^1\!\int_0^1\!\int_0^1 (3x + y)\,dx\,dy\,dz = \tfrac{3}{2} + \tfrac{1}{2} = 2$。</li>
+        <li>$x = 1$ 面（$d\mathbf{s} = \mathbf{a}_x\,dy\,dz$）：$A_x = 1$，通量 $= 1$。$x = 0$ 面（$d\mathbf{s} = -\mathbf{a}_x\,dy\,dz$）：$A_x = 0$，通量 $= 0$。</li>
+        <li>$y = 1$ 面：$A_y = x$，通量 $= \int_0^1\!\int_0^1 x\,dx\,dz = \tfrac12$。$y = 0$ 面：$A_y = 0$。</li>
+        <li>$z = 1$ 面：$A_z = y$，通量 $= \tfrac12$。$z = 0$ 面：$A_z = 0$。</li>
+        <li>總通量 $= 1 + \tfrac12 + \tfrac12 = 2$，與體積分相同。</li>
+      </ol>
+      <p class="answer"><b>答：</b>兩邊都等於 $2$，散度定理成立。</p>
+    </details>
+  </article>
+
+  <article class="example" id="ex-4">
+    <h3>例題 4　<span class="topic">圓柱座標的 Stokes 定理</span></h3>
+    <div class="problem" lang="en">
+      <p>Given $\mathbf{A} = \mathbf{a}_\phi\,3r^2$ in cylindrical coordinates, verify Stokes's theorem for the circular disk $r \le 1$ in the $z = 0$ plane, with the contour traversed counterclockwise as seen from $+z$.</p>
+    </div>
+    <p class="hint"><b>提示：</b>逆時針繞行配上 $d\mathbf{s} = \mathbf{a}_z\,r\,dr\,d\phi$。旋度只剩 $z$ 分量。</p>
+    <details class="solution">
+      <summary>看詳解</summary>
+      <ol class="steps">
+        <li>線積分：在 $r = 1$ 上 $d\boldsymbol{\ell} = \mathbf{a}_\phi\,r\,d\phi = \mathbf{a}_\phi\,d\phi$，$\oint \mathbf{A}\cdot d\boldsymbol{\ell} = \int_0^{2\pi} 3(1)^2\,d\phi = 6\pi$。</li>
+        <li>旋度（圓柱，$h = (1, r, 1)$）：只有 $A_\phi$，所以 $\nabla\times\mathbf{A} = \mathbf{a}_z\dfrac{1}{r}\dfrac{\partial (r\cdot 3r^2)}{\partial r} = \mathbf{a}_z\dfrac{9r^2}{r} = \mathbf{a}_z\,9r$。</li>
+        <li>面積分：$\int_0^{2\pi}\!\int_0^1 9r\cdot r\,dr\,d\phi = 9\cdot\tfrac13\cdot 2\pi = 6\pi$。</li>
+      </ol>
+      <p class="answer"><b>答：</b>兩邊都等於 $6\pi \approx 18.85$，Stokes 定理成立。</p>
+    </details>
+  </article>
+</section>
+
+<section id="pitfalls">
+  <h2>常見陷阱 <span class="en">Pitfalls</span></h2>
+  <ul class="pitfalls">
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>把 $\mathbf{a}_r$、$\mathbf{a}_\phi$ 當成常數提到積分外面，例如 $\int_0^{2\pi}\mathbf{a}_r\,d\phi = 2\pi\,\mathbf{a}_r$。</p>
+      <p class="right"><b>正確想法：</b>圓柱和球座標的單位向量會隨位置轉向，積分前要先換成直角座標：$\mathbf{a}_r = \mathbf{a}_x\cos\phi + \mathbf{a}_y\sin\phi$，繞一圈積分結果是 $0$。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>圓柱座標的散度寫成 $\partial A_r/\partial r + \partial A_\phi/\partial\phi + \partial A_z/\partial z$。</p>
+      <p class="right"><b>正確想法：</b>非直角座標一定有度量係數：$\frac{1}{r}\frac{\partial(rA_r)}{\partial r} + \frac{1}{r}\frac{\partial A_\phi}{\partial\phi} + \cdots$。考前把三種座標的散度各默寫一次。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>散度定理的六個面都用 $+\mathbf{a}_x$、$+\mathbf{a}_y$、$+\mathbf{a}_z$ 當法向量。</p>
+      <p class="right"><b>正確想法：</b>$d\mathbf{s}$ 一律朝外，所以 $x = 0$ 那面是 $-\mathbf{a}_x$。只要那個面上的分量不為零，符號就會影響答案。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>外積順序寫反，或行列式展開時中間項忘記加負號。</p>
+      <p class="right"><b>正確想法：</b>$\mathbf{A}\times\mathbf{B} = -\mathbf{B}\times\mathbf{A}$。算完用「和兩個原向量內積都是零」檢查一次，三秒就能抓到錯。</p>
+    </li>
+    <li class="pitfall">
+      <p class="wrong"><b>常見錯法：</b>對純量取散度，或對散度（純量）再取旋度。</p>
+      <p class="right"><b>正確想法：</b>梯度：純量進、向量出；散度：向量進、純量出；旋度：向量進、向量出。寫算式前先確認每一層的型別。</p>
+    </li>
+  </ul>
+</section>
+
+<section id="terms">
+  <h2>中英術語 <span class="en">Terms</span></h2>
+  <div class="table-wrap">
+    <table class="terms">
+      <thead><tr><th>中文</th><th>English</th><th>符號／備註</th></tr></thead>
+      <tbody>
+        <tr><td>純量</td><td>scalar</td><td>只有大小</td></tr>
+        <tr><td>向量</td><td>vector</td><td>粗體 $\mathbf{A}$</td></tr>
+        <tr><td>單位向量</td><td>unit vector</td><td>$\mathbf{a}_x$、$\mathbf{a}_r$、$\mathbf{a}_R$</td></tr>
+        <tr><td>內積</td><td>dot product</td><td>又稱 scalar product</td></tr>
+        <tr><td>外積</td><td>cross product</td><td>又稱 vector product</td></tr>
+        <tr><td>正交座標系</td><td>orthogonal coordinate system</td><td></td></tr>
+        <tr><td>度量係數</td><td>metric coefficient</td><td>$h_1, h_2, h_3$</td></tr>
+        <tr><td>圓柱座標</td><td>cylindrical coordinates</td><td>$(r, \phi, z)$</td></tr>
+        <tr><td>球座標</td><td>spherical coordinates</td><td>$(R, \theta, \phi)$</td></tr>
+        <tr><td>梯度</td><td>gradient</td><td>$\nabla V$</td></tr>
+        <tr><td>方向導數</td><td>directional derivative</td><td>$\nabla V\cdot\mathbf{a}_\ell$</td></tr>
+        <tr><td>通量</td><td>flux</td><td>$\int_S \mathbf{A}\cdot d\mathbf{s}$</td></tr>
+        <tr><td>散度</td><td>divergence</td><td>$\nabla\cdot\mathbf{A}$</td></tr>
+        <tr><td>散度定理</td><td>divergence theorem</td><td>又稱 Gauss's theorem</td></tr>
+        <tr><td>環量</td><td>circulation</td><td>$\oint_C \mathbf{A}\cdot d\boldsymbol{\ell}$</td></tr>
+        <tr><td>旋度</td><td>curl</td><td>$\nabla\times\mathbf{A}$</td></tr>
+        <tr><td>Stokes 定理</td><td>Stokes's theorem</td><td></td></tr>
+        <tr><td>無旋場</td><td>irrotational field</td><td>$\nabla\times\mathbf{A} = 0$</td></tr>
+        <tr><td>無源場</td><td>solenoidal field</td><td>$\nabla\cdot\mathbf{A} = 0$</td></tr>
+        <tr><td>Helmholtz 定理</td><td>Helmholtz's theorem</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="quiz">
+  <h2>自我檢測 <span class="en">Self-check</span></h2>
+  <div class="quiz">
+    <fieldset class="q" data-answer="b">
+      <legend>1. 在圓柱座標中，$\int_0^{2\pi}\mathbf{a}_r\,d\phi$ 等於？</legend>
+      <label><input type="radio" name="q1" value="a"> $2\pi\,\mathbf{a}_r$</label>
+      <label><input type="radio" name="q1" value="b"> $0$</label>
+      <label><input type="radio" name="q1" value="c"> $2\pi$</label>
+      <label><input type="radio" name="q1" value="d"> $\mathbf{a}_\phi$</label>
+      <p class="explain">$\mathbf{a}_r = \mathbf{a}_x\cos\phi + \mathbf{a}_y\sin\phi$，$\cos\phi$ 和 $\sin\phi$ 繞一圈積分都是 $0$。選 A 就是把單位向量當成常數了。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="c">
+      <legend>2. 某向量場在空間中處處 $\nabla\cdot\mathbf{A} = 0$，可以推出什麼？</legend>
+      <label><input type="radio" name="q2" value="a"> 場線處處互相平行</label>
+      <label><input type="radio" name="q2" value="b"> 場的大小處處相同</label>
+      <label><input type="radio" name="q2" value="c"> 穿出任何封閉曲面的淨通量都是零</label>
+      <label><input type="radio" name="q2" value="d"> 它一定是某個純量場的梯度</label>
+      <p class="explain">由散度定理，$\oint_S\mathbf{A}\cdot d\mathbf{s} = \int_V 0\,dv = 0$。D 說的是無旋場（$\nabla\times\mathbf{A} = 0$）的性質，不是無源場。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="a">
+      <legend>3. 下列哪一個運算沒有意義？</legend>
+      <label><input type="radio" name="q3" value="a"> $\nabla\times(\nabla\cdot\mathbf{A})$</label>
+      <label><input type="radio" name="q3" value="b"> $\nabla\cdot(\nabla V)$</label>
+      <label><input type="radio" name="q3" value="c"> $\nabla(\nabla\cdot\mathbf{A})$</label>
+      <label><input type="radio" name="q3" value="d"> $\nabla\cdot(\nabla\times\mathbf{A})$</label>
+      <p class="explain">$\nabla\cdot\mathbf{A}$ 是純量，純量不能取旋度。B 是 Laplacian，C 是散度的梯度，D 恆等於零但有意義。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="d">
+      <legend>4. 純量場的梯度和它的等值面是什麼關係？</legend>
+      <label><input type="radio" name="q4" value="a"> 平行於等值面</label>
+      <label><input type="radio" name="q4" value="b"> 和等值面夾 $45^\circ$</label>
+      <label><input type="radio" name="q4" value="c"> 沒有固定關係</label>
+      <label><input type="radio" name="q4" value="d"> 垂直於等值面</label>
+      <p class="explain">沿著等值面移動時 $V$ 不變，$\nabla V\cdot d\boldsymbol{\ell} = 0$，所以梯度垂直於等值面。這也是之後「電場垂直於等位面」的原因。</p>
+    </fieldset>
+
+    <fieldset class="q" data-answer="c">
+      <legend>5. 依 Helmholtz 定理，要唯一決定一個在無窮遠處趨近於零的向量場，需要知道什麼？</legend>
+      <label><input type="radio" name="q5" value="a"> 只要它的散度</label>
+      <label><input type="radio" name="q5" value="b"> 只要它的旋度</label>
+      <label><input type="radio" name="q5" value="c"> 它的散度和旋度</label>
+      <label><input type="radio" name="q5" value="d"> 它在某一個封閉曲面上的值</label>
+      <p class="explain">散度和旋度缺一不可。所以 Maxwell 方程式剛好就是電場、磁場各自的散度和旋度。</p>
+    </fieldset>
+  </div>
+</section>
+
+<footer class="note-foot"></footer>
+</main>
+</div>
+
+<footer class="site-foot">
+  內容依課本整理，例題數字自行設計並驗算。發現錯誤請到 GitHub 開 issue。
+</footer>
+</body>
+</html>
