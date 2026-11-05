@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>電資考前講義庫</title>
+<meta name="description" content="電磁學、電路學、電子學的中英對照考前講義，一章一頁，版型固定。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script defer src="assets/vendor/katex/katex.min.js"></script>
+<script defer src="assets/vendor/katex/auto-render.min.js"></script>
+<script defer src="assets/catalog.js"></script>
+<script defer src="assets/home.js"></script>
+</head>
+<body class="home course-em">
+<a class="skip" href="#main">跳到內容</a>
+<header class="site-bar">
+  <a class="brand" href="index.html">電資考前講義庫</a>
+  <nav aria-label="網站">
+    <a href="index.html" aria-current="page">講義目錄</a>
+    <a href="glossary.html">術語表</a>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div>
+      <h1>電資考前講義庫</h1>
+      <p>電磁學、電路學、電子學，一章一頁。考試用英文出題，所以每一頁都中英對照，而且版型固定：先看本章地圖和觀念，再翻公式卡，最後用例題和自我檢測確認自己真的會。</p>
+      <ul class="stats" id="stats" aria-label="講義統計"></ul>
+    </div>
+    <figure class="hero-card" aria-label="公式卡範例">
+      <figcaption>散度定理 <span class="en">Divergence theorem</span></figcaption>
+      <div class="math">$$\int_V \nabla\cdot\mathbf{A}\,dv = \oint_S \mathbf{A}\cdot d\mathbf{s}$$</div>
+      <p><b>何時用：</b>體積分難算、表面積分好算（或反過來）時互換。</p>
+      <p><a href="courses/em/ch02-vector-analysis.html#f-divergence-theorem">這張卡出自電磁學第 2 章</a></p>
+    </figure>
+  </section>
+
+  <div id="courses"></div>
+
+  <section class="howto" aria-labelledby="howto-title">
+    <h2 id="howto-title">每一頁都長這樣</h2>
+    <p>所有講義共用同一個版型，寫在專案的 <a data-repo-link="/blob/main/CLAUDE.md" href="CLAUDE.md">CLAUDE.md</a>。讀完新的一章，只要請 AI 照這份規則新增，就會得到順序、格式、術語都一致的新頁面，並自動出現在目錄和術語表。</p>
+    <ol class="layout-steps">
+      <li><b>本章地圖</b><span>範圍與先備</span></li>
+      <li><b>核心觀念</b><span>先直覺再定義</span></li>
+      <li><b>公式卡</b><span>何時用、注意條件</span></li>
+      <li><b>例題</b><span>英文題目、可展開詳解</span></li>
+      <li><b>常見陷阱</b><span>錯法對照正解</span></li>
+      <li><b>中英術語</b><span>彙整進術語表</span></li>
+      <li><b>自我檢測</b><span>單選題附解析</span></li>
+    </ol>
+  </section>
+</main>
+
+<footer class="site-foot">
+  大二電資核心課的考前筆記，內容依課本整理，例題數字自行設計並驗算。原始碼與規則：<a data-repo-link="" href="https://github.com/bonnie20070228-oss/eecs-exam-notes">GitHub</a>
+</footer>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>中英術語表 | 電資考前講義庫</title>
+<meta name="description" content="從每份講義的中英術語表自動彙整而成，可搜尋中文或英文。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@700&display=swap">
+<link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+<script defer src="assets/vendor/katex/katex.min.js"></script>
+<script defer src="assets/vendor/katex/auto-render.min.js"></script>
+<script defer src="assets/catalog.js"></script>
+<script defer src="assets/glossary.js"></script>
+</head>
+<body class="glossary course-em">
+<a class="skip" href="#main">跳到內容</a>
+<header class="site-bar">
+  <a class="brand" href="index.html">電資考前講義庫</a>
+  <nav aria-label="網站">
+    <a href="index.html">講義目錄</a>
+    <a href="glossary.html" aria-current="page">術語表</a>
+  </nav>
+</header>
+
+<main id="main">
+  <header class="glossary-head">
+    <h1>中英術語表</h1>
+    <p>這張表沒有手動維護：它讀取每份講義最後的「中英術語」表格，自動合併在一起。考前用英文關鍵字搜尋，可以快速對回中文觀念和出處。</p>
+  </header>
+
+  <div class="filters">
+    <label for="q" class="visually-hidden">搜尋術語</label>
+    <input id="q" type="search" placeholder="輸入中文或英文，例如 divergence、阻尼" autocomplete="off">
+    <label for="course">課程</label>
+    <select id="course"><option value="">全部課程</option></select>
+  </div>
+  <p class="term-count" id="count" aria-live="polite">讀取講義中……</p>
+  <div class="table-wrap">
+    <table class="terms" id="glossary-table">
+      <thead><tr><th>中文</th><th>English</th><th>符號／備註</th><th>出處</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</main>
+
+<footer class="site-foot">
+  術語表由各講義的 <code>#terms</code> 表格產生。新增講義時照 CLAUDE.md 的格式寫術語表，這裡就會自動出現。
+</footer>
+</body>
+</html>
